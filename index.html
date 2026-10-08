@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5ebe0">
+<title>Mi Tienda</title>
+<style>
+:root{--bg:#f5ebe0;--card:#fffaf5;--tx:#2e1f16;--ac:#4b2e1e;--hi:#b5651d;--mu:#8a7766;--bd:#e8dccf;--onac:#fff;--chip:#f1e4d6;box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--tx);font:15px/1.4 -apple-system,system-ui,"Segoe UI",sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.w{max-width:430px;margin:0 auto;padding:12px 16px}
+h1,h2,.sf{font-family:Georgia,"Times New Roman",serif}
+h1{font-size:28px;line-height:1.1;margin:6px 0 2px}h1 span{color:var(--hi)}
+.sub{color:var(--mu);margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:14px;margin-bottom:12px}
+input,select{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);font:inherit;font-size:16px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--mu) 50%),linear-gradient(135deg,var(--mu) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+select:disabled{opacity:.5}
+.rate{display:flex;align-items:center;gap:8px;white-space:nowrap}.rate input{flex:1;min-width:0}
+.search{margin-bottom:12px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.p{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:12px;text-align:left;color:var(--tx);font:inherit;min-height:130px;display:flex;flex-direction:column;gap:2px}
+.p:active{transform:scale(.97)}.p:disabled{opacity:.45}
+.av{width:38px;height:38px;border-radius:50%;background:var(--chip);color:var(--ac);display:grid;place-items:center;font:700 18px Georgia,serif;margin-bottom:6px}
+.p b{font-size:15px}.p .mu{font-size:12px}
+.pr{margin-top:auto;font-weight:700;padding-right:36px}
+.r2{color:var(--hi);font-size:12px;font-weight:700;display:block}
+.plus{position:absolute;right:10px;bottom:10px;width:32px;height:32px;border-radius:50%;background:var(--ac);color:var(--onac);display:grid;place-items:center;font-size:20px}
+.bd{position:absolute;right:10px;top:10px;background:var(--hi);color:#fff;border-radius:99px;font-size:12px;padding:1px 8px;font-weight:700}
+.mu{color:var(--mu)}
+.r{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--bd)}.r:last-child{border:0}
+.q{display:flex;align-items:center;gap:10px}
+.q button{width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:18px}
+.t{font:700 24px Georgia,serif;margin:10px 0}
+.b{width:100%;min-height:50px;border:0;border-radius:16px;background:var(--ac);color:var(--onac);font:600 16px inherit;font-family:inherit;display:block}
+.b:disabled{opacity:.4}
+.s{min-height:36px;padding:6px 12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;font:inherit}
+.red{color:#c0392b}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.f2{grid-column:1/-1}
+.tb{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--card);border-top:1px solid var(--bd);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+.tb div{display:flex;width:100%;max-width:430px}
+.tb button{flex:1;border:0;background:none;color:var(--mu);font:inherit;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;min-height:48px}
+.tb button i{font-style:normal;font-size:20px}
+.tb button.on{color:var(--ac);font-weight:700}
+.tb button.on i{background:var(--chip);border-radius:14px;padding:0 14px}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:4;border:0;border-radius:99px;background:var(--ac);color:var(--onac);padding:12px 22px;font:600 15px inherit;font-family:inherit;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.sw{display:flex;gap:8px;flex-wrap:wrap}.sw button{display:flex;border:2px solid var(--bd);border-radius:14px;padding:4px;background:var(--card);gap:3px;min-height:44px;align-items:center}
+.sw button.on{border-color:var(--ac)}.sw u{width:20px;height:28px;border-radius:7px;display:block}
+.cp{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}.cp:last-child{border:0}
+.cp input{width:56px;min-height:40px;padding:2px;border-radius:12px}
+</style></head><body><div class="w">
+<h1 class="sf" id="ttl">Mi <span>Tienda</span></h1>
+<p class="sub">Registrá tus ventas en Gs y R$</p>
+<div class="card rate"><span class="mu">1 R$ =</span><input id="rate" type="number" inputmode="decimal" min="0" placeholder="cotización" oninput="S.rate=+this.value||0;save();draw()"><span class="mu">Gs</span></div>
+<div id="app"></div></div>
+<nav class="tb"><div id="nav"></div></nav>
+<script>
+const DEF={bg:'#f5ebe0',card:'#fffaf5',tx:'#2e1f16',ac:'#4b2e1e',hi:'#b5651d'};
+const PRE={'Café':DEF,'Matcha':{bg:'#eef2e6',card:'#fafcf5',tx:'#1f2a1c',ac:'#3d5a35',hi:'#8a6d1d'},'Rosa':{bg:'#f8e9ee',card:'#fff8fa',tx:'#3a1f2b',ac:'#8e3a5c',hi:'#c2603f'},'Océano':{bg:'#e6eff4',card:'#f8fcfe',tx:'#14262f',ac:'#1f5a75',hi:'#d2792b'},'Noche':{bg:'#171412',card:'#241f1c',tx:'#f0e8df',ac:'#d9a15f',hi:'#e8b27a'}};
+const NAMES={bg:'Fondo',card:'Tarjetas',tx:'Texto',ac:'Botones',hi:'Acento'};
+let S={prods:[],sales:[],rate:0,pixKey:'',theme:{}},cart={},tab='v',edit=null,cur='PYG',pay='Efectivo',delId=null;
+try{S=Object.assign(S,JSON.parse(localStorage.getItem('pos1'))||{})}catch(e){}
+S.theme=Object.assign({},DEF,S.theme);
+const save=()=>{try{localStorage.setItem('pos1',JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const gs=n=>new Intl.NumberFormat('es-PY').format(Math.round(n))+' Gs';
+const fr=n=>new Intl.NumberFormat('es-PY',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+const dual=n=>gs(n)+(S.rate>0?`<span class="r2">R$ ${fr(n/S.rate)}</span>`:'');
+const rgb=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+const mix=(a,b,t)=>'#'+rgb(a).map((v,i)=>Math.round(v*t+rgb(b)[i]*(1-t)).toString(16).padStart(2,'0')).join('');
+const lum=h=>{const [r,g,b]=rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
+function applyTheme(){const t=S.theme,r=document.documentElement.style;
+ r.setProperty('--bg',t.bg);r.setProperty('--card',t.card);r.setProperty('--tx',t.tx);r.setProperty('--ac',t.ac);r.setProperty('--hi',t.hi);
+ r.setProperty('--mu',mix(t.tx,t.bg,.55));r.setProperty('--bd',mix(t.tx,t.bg,.13));r.setProperty('--chip',mix(t.ac,t.card,.12));
+ r.setProperty('--onac',lum(t.ac)>.45?'#1b1b1b':'#fff');
+ const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t.bg}
+const TABS=[['v','🛍️','Vender'],['p','📦','Productos'],['h','🧾','Ventas'],['a','🎨','Ajustes']];
+function draw(){
+ $('#nav').innerHTML=TABS.map(([k,i,l])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';draw();scrollTo(0,0)"><i>${i}</i>${l}</button>`).join('');
+ $('#app').innerHTML={v:vender,p:prods,h:hist,a:ajustes}[tab]();
+}
+function vender(){
+ if(pay==='Pix'&&!(S.rate>0))pay='Efectivo';
+ if(pay==='Pix')cur='BRL';else if(pay!=='Efectivo')cur='PYG';
+ const items=Object.entries(cart).map(([id,q])=>({p:S.prods.find(x=>x.id==id),q})).filter(x=>x.p);
+ const tot=items.reduce((a,x)=>a+x.p.price*x.q,0),n=items.reduce((a,x)=>a+x.q,0);
+ const brl=cur==='BRL'&&S.rate>0;
+ return `<input class="search" id="qs" placeholder="🔍 Buscar producto..." oninput="filt(this.value)">
+ <div class="g" id="grid">${grid('')}</div>
+ ${S.prods.length?'':'<p class="mu">Todavía no hay productos. Cargalos en la pestaña Productos.</p>'}
+ <div class="card" id="cart"><h2 style="margin:0 0 4px;font-size:20px">Carrito</h2>
+ ${items.length?items.map(x=>`<div class="r"><div><b>${esc(x.p.name)}</b><div class="mu">${dual(x.p.price)}</div></div>
+ <div class="q"><button onclick="chg(${x.p.id},-1)">−</button><b>${x.q}</b><button onclick="chg(${x.p.id},1)">+</button></div></div>`).join(''):'<p class="mu">Vacío</p>'}
+ <div class="t">${gs(tot)}${S.rate>0?`<span class="r2" style="font-size:15px">R$ ${fr(tot/S.rate)}</span>`:''}</div>
+ <div class="f"><select onchange="pay=this.value;draw()">${['Efectivo','Pix','Transferencia','Tarjeta','QR'].map(m=>`<option ${m===pay?'selected':''} ${m==='Pix'&&!(S.rate>0)?'disabled':''}>${m}</option>`).join('')}</select>
+ <select onchange="cur=this.value;draw()" ${pay==='Efectivo'?'':'disabled'}><option value="PYG" ${cur==='PYG'?'selected':''}>En Gs</option><option value="BRL" ${cur==='BRL'?'selected':''} ${S.rate>0?'':'disabled'}>En R$</option></select></div>
+ <p class="mu" style="margin:4px 0 10px">A cobrar: <b style="color:var(--tx)">${brl?'R$ '+fr(tot/S.rate):gs(tot)}</b></p>
+ ${pay==='Pix'?(S.pixKey?`<p class="mu">Clave Pix: <b style="color:var(--tx)">${esc(S.pixKey)}</b></p>`:'<p class="mu">Cargá tu clave Pix en Ajustes</p>'):''}
+ <button class="b" onclick="cobrar()" ${items.length?'':'disabled'}>Cobrar</button></div>
+ ${n?`<button class="fab" onclick="$('#cart').scrollIntoView({behavior:'smooth'})">🛒 ${n} · ${gs(tot)}</button>`:''}`;
+}
+function grid(f){return S.prods.filter(p=>p.name.toLowerCase().includes(f.toLowerCase())).map(p=>
+ `<button class="p" ${p.stock<=0?'disabled':''} onclick="chg(${p.id},1)">${cart[p.id]?`<span class="bd">${cart[p.id]}</span>`:''}
+ <div class="av">${esc(p.name[0]||'?').toUpperCase()}</div><b>${esc(p.name)}</b><span class="mu">Stock ${p.stock}</span>
+ <div class="pr">${dual(p.price)}</div><span class="plus">+</span></button>`).join('')}
+function filt(v){$('#grid').innerHTML=grid(v)}
+function chg(id,d){const p=S.prods.find(x=>x.id==id);const n=(cart[id]||0)+d;
+ if(n<=0)delete cart[id];else if(n<=p.stock)cart[id]=n;else toast('No hay más stock');
+ const y=scrollY;draw();scrollTo(0,y)}
+function cobrar(){
+ const items=Object.entries(cart).map(([id,q])=>{const p=S.prods.find(x=>x.id==id);return{id:p.id,name:p.name,price:p.price,q}});
+ const total=items.reduce((a,x)=>a+x.price*x.q,0);
+ items.forEach(i=>{S.prods.find(p=>p.id==i.id).stock-=i.q});
+ const b=cur==='BRL'&&S.rate>0;
+ S.sales.unshift({date:new Date().toISOString(),items,total,pay,cur:b?'BRL':'PYG',rate:S.rate,paid:b?Math.round(total/S.rate*100)/100:total});
+ cart={};save();draw();toast('Venta registrada ✓')}
+function prods(){
+ const e=S.prods.find(p=>p.id===edit)||{name:'',price:'',stock:''};
+ return `<div class="card"><h2 style="margin:0;font-size:20px">${edit?'Editar producto':'Nuevo producto'}</h2><div class="f">
+ <input class="f2" id="n" placeholder="Nombre" value="${esc(e.name)}"><input id="pr" type="number" inputmode="numeric" min="0" placeholder="Precio en Gs" value="${e.price}"><input id="st" type="number" inputmode="numeric" min="0" placeholder="Stock" value="${e.stock}"></div>
+ <button class="b" onclick="addP()">${edit?'Guardar cambios':'Agregar'}</button></div>
+ <div class="card">${S.prods.length?S.prods.map(p=>`<div class="r"><div><b>${esc(p.name)}</b><div class="mu">${dual(p.price)}<br>Stock ${p.stock}</div></div>
+ <div style="display:flex;gap:6px"><button class="s" onclick="edit=${p.id};draw();scrollTo(0,0)">Editar</button><button class="s red" onclick="delP(${p.id})">${delId===p.id?'¿Seguro?':'Borrar'}</button></div></div>`).join(''):'<p class="mu">Sin productos aún</p>'}</div>`;
+}
+function addP(){
+ const name=$('#n').value.trim(),price=+$('#pr').value,stock=+$('#st').value;
+ if(!name||!(price>=0)||$('#pr').value==='')return toast('Poné nombre y precio');
+ if(edit){Object.assign(S.prods.find(p=>p.id===edit),{name,price,stock});edit=null}
+ else S.prods.push({id:Date.now(),name,price,stock:stock||0});
+ save();draw()}
+function delP(id){if(delId===id){S.prods=S.prods.filter(p=>p.id!==id);delete cart[id];delId=null;save()}else delId=id;draw()}
+function hist(){
+ const hoy=new Date().toDateString(),hs=S.sales.filter(s=>new Date(s.date).toDateString()===hoy);
+ const th=hs.reduce((a,s)=>a+s.total,0),cg=hs.filter(s=>s.cur!=='BRL').reduce((a,s)=>a+s.total,0),cr=hs.filter(s=>s.cur==='BRL').reduce((a,s)=>a+s.paid,0);
+ return `<div class="card"><span class="mu">Vendido hoy</span><div class="t" style="margin:4px 0">${gs(th)}</div>
+ <div class="mu">Cobrado en Gs: ${gs(cg)}<br>Cobrado en R$: R$ ${fr(cr)}</div><button class="s" style="margin-top:10px" onclick="csv()">Exportar CSV</button></div>
+ <div class="card">${S.sales.length?S.sales.map(s=>`<div class="r"><div><b>${gs(s.total)}</b>${s.cur==='BRL'?`<span class="r2">R$ ${fr(s.paid)} a ${gs(s.rate)}</span>`:''}
+ <div class="mu">${s.pay} · ${new Date(s.date).toLocaleString('es-PY')}<br>${s.items.map(i=>esc(i.name)+' ×'+i.q).join(', ')}</div></div></div>`).join(''):'<p class="mu">Sin ventas todavía</p>'}</div>`;
+}
+function ajustes(){
+ return `<div class="card"><h2 style="margin:0 0 8px;font-size:20px">Clave Pix</h2>
+ <input placeholder="CPF, celular, email..." value="${esc(S.pixKey||'')}" oninput="S.pixKey=this.value;save()"></div>
+ <div class="card"><h2 style="margin:0 0 8px;font-size:20px">Paleta de colores</h2>
+ <div class="sw">${Object.entries(PRE).map(([k,v])=>`<button onclick="setPre('${k}')" aria-label="${k}"><u style="background:${v.bg};border:1px solid #0002"></u><u style="background:${v.ac}"></u><u style="background:${v.hi}"></u><span style="padding:0 6px;font-size:13px">${k}</span></button>`).join('')}</div>
+ <p class="mu" style="margin:12px 0 2px">O armá la tuya:</p>
+ ${Object.entries(NAMES).map(([k,l])=>`<div class="cp"><span>${l}</span><input type="color" id="c_${k}" value="${S.theme[k]}" oninput="S.theme.${k}=this.value;save();applyTheme()"></div>`).join('')}</div>`;
+}
+function setPre(k){S.theme=Object.assign({},PRE[k]);save();applyTheme();draw()}
+function csv(){
+ const rows=['fecha,producto,cantidad,precio_gs,pago,moneda,cotizacion'];
+ S.sales.forEach(s=>s.items.forEach(i=>rows.push([s.date,'"'+i.name.replace(/"/g,'""')+'"',i.q,i.price,s.pay,s.cur||'PYG',s.rate||''].join(','))));
+ const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='ventas.csv';a.click()}
+function toast(m){const t=document.createElement('div');t.textContent=m;t.style.cssText='position:fixed;left:50%;transform:translateX(-50%);top:calc(14px + env(safe-area-inset-top,0px));background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:14px;z-index:9';document.body.appendChild(t);setTimeout(()=>t.remove(),2000)}
+$('#rate').value=S.rate||'';applyTheme();draw();
+</script></body></html>
