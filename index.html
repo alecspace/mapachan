@@ -16,6 +16,7 @@ h1{font-size:28px;line-height:1.1;margin:6px 0 2px}h1 span{color:var(--ac)}
 input,select{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);font:inherit;font-size:16px;-webkit-appearance:none;appearance:none}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--mu) 50%),linear-gradient(135deg,var(--mu) 50%,transparent 50%);background-position:calc(100% - 18px) 19px,calc(100% - 13px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
 select:disabled{opacity:.5}
+input[type=range]{-webkit-appearance:auto;appearance:auto;accent-color:var(--ac);background:none;border:0;padding:0}
 .rate{display:flex;align-items:center;gap:8px;white-space:nowrap}.rate input{flex:1;min-width:0}
 .search{margin-bottom:12px}
 .g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
@@ -127,27 +128,51 @@ function cobrar(){
 function prods(){
  const e=S.prods.find(p=>p.id===edit)||{name:'',price:'',stock:''};
  return `<div class="card"><h2 style="margin:0;font-size:20px">${edit?'Editar producto':'Nuevo producto'}</h2>
- <div class="ph"><div class="th" id="prev">${tmpImg?`<img src="${tmpImg}" alt="">`:'📷'}</div><div style="flex:1">
- <label class="s" style="display:inline-flex;align-items:center">${tmpImg?'Cambiar foto':'Agregar foto'}<input type="file" accept="image/*" onchange="pickImg(this)" style="display:none"></label>
- ${tmpImg?'<button class="s red" style="margin-left:6px" onclick="tmpImg=null;draw()">Quitar</button>':''}</div></div>
+ <div class="ph"><div class="th" id="prev">${tmpImg?`<img src="${tmpImg}" alt="">`:'📷'}</div><div style="flex:1;display:flex;flex-wrap:wrap;gap:6px">
+ <label class="s" style="display:inline-flex;align-items:center">Elegir foto<input type="file" accept="image/*" onchange="pickImg(this)" style="display:none"></label>
+ <button class="s" onclick="openCrop()">Ajustar</button><button class="s red" onclick="tmpImg=null;cropSrc=null;$('#prev').textContent='📷'">Quitar</button></div></div>
  <div class="f"><input class="f2" id="n" placeholder="Nombre" value="${esc(e.name)}"><input id="pr" type="number" inputmode="numeric" min="0" placeholder="Precio en Gs" value="${e.price}"><input id="st" type="number" inputmode="numeric" min="0" placeholder="Stock" value="${e.stock}"></div>
- <button class="b" onclick="addP()">${edit?'Guardar cambios':'Agregar'}</button>${edit?'<button class="s" style="width:100%;margin-top:8px" onclick="edit=null;tmpImg=null;draw()">Cancelar</button>':''}</div>
+ <button class="b" onclick="addP()">${edit?'Guardar cambios':'Agregar'}</button>${edit?'<button class="s" style="width:100%;margin-top:8px" onclick="edit=null;tmpImg=null;cropSrc=null;draw()">Cancelar</button>':''}</div>
  <div class="card" style="padding:2px 14px">${S.prods.length?S.prods.map(p=>`<div class="pw">${thumb(p)}<div class="in"><b>${esc(p.name)}</b><div class="mu">Stock ${p.stock}</div><div class="pp">${dual(p.price)}</div></div>
  <div style="display:flex;flex-direction:column;gap:6px"><button class="s" onclick="startEdit(${p.id})">Editar</button><button class="s red" onclick="delP(${p.id})">${delId===p.id?'¿Seguro?':'Borrar'}</button></div></div>`).join(''):'<p class="mu">Sin productos aún</p>'}</div>`;
 }
-function startEdit(id){edit=id;tmpImg=S.prods.find(p=>p.id===id).img||null;draw();scrollTo(0,0)}
+function startEdit(id){cropSrc=null;edit=id;tmpImg=S.prods.find(p=>p.id===id).img||null;draw();scrollTo(0,0)}
+let cropSrc=null;
 function pickImg(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();
- r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=200;const x=c.getContext('2d');
-  x.fillStyle='#fff';x.fillRect(0,0,200,200);const m=Math.min(im.width,im.height);
-  x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,200,200);
-  tmpImg=c.toDataURL('image/jpeg',.85);$('#prev').innerHTML=`<img src="${tmpImg}" alt="">`};
-  im.onerror=()=>toast('No se pudo leer la imagen');im.src=r.result};r.readAsDataURL(f)}
+ r.onload=()=>{const im=new Image();im.onload=()=>{cropSrc=im;openCrop()};im.onerror=()=>toast('No se pudo leer la imagen');im.src=r.result};r.readAsDataURL(f);inp.value=''}
+function openCrop(){
+ if(!cropSrc){if(!tmpImg)return toast('Elegí una foto primero');const t=new Image();t.onload=()=>{cropSrc=t;openCrop()};t.src=tmpImg;return}
+ const im=cropSrc,V=Math.min(300,innerWidth-64),base=V/Math.min(im.width,im.height);let z=1,ox=0,oy=0;
+ const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px';
+ ov.innerHTML=`<div class="card" style="margin:0;width:${V+30}px"><h2 style="margin:0 0 10px;font-size:20px">Ajustar foto</h2>
+ <canvas id="cv" width="${V}" height="${V}" style="width:${V}px;height:${V}px;border-radius:16px;touch-action:none;display:block;background:#fff"></canvas>
+ <p class="mu" style="margin:8px 0 2px;font-size:12px">Arrastrá para mover · pellizcá o usá la barra para el zoom</p>
+ <input type="range" id="zm" min="1" max="4" step="0.01" value="1" style="padding:0;min-height:32px;border:0">
+ <div class="f" style="margin-bottom:0"><button class="s" id="cc" style="min-height:44px">Cancelar</button><button class="b" id="ok" style="min-height:44px;border-radius:12px">Listo</button></div></div>`;
+ document.body.appendChild(ov);
+ const cv=ov.querySelector('#cv'),cx=cv.getContext('2d'),zm=ov.querySelector('#zm');
+ const geom=P=>{const k=P/V,w=im.width*base*z*k,h=im.height*base*z*k;return[(P-w)/2+ox*k,(P-h)/2+oy*k,w,h]};
+ const paint=()=>{const w=im.width*base*z,h=im.height*base*z,mx=Math.max(0,(w-V)/2),my=Math.max(0,(h-V)/2);
+  ox=Math.max(-mx,Math.min(mx,ox));oy=Math.max(-my,Math.min(my,oy));cx.fillStyle='#fff';cx.fillRect(0,0,V,V);cx.drawImage(im,...geom(V))};
+ const setZ=v=>{z=Math.max(1,Math.min(4,v));zm.value=z;paint()};
+ const pts=new Map();let ld=0;
+ cv.onpointerdown=e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});ld=0};
+ cv.onpointermove=e=>{const p=pts.get(e.pointerId);if(!p)return;
+  if(pts.size===1){ox+=e.clientX-p.x;oy+=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;paint()}
+  else{p.x=e.clientX;p.y=e.clientY;const [a,b]=[...pts.values()],d=Math.hypot(a.x-b.x,a.y-b.y);if(ld)setZ(z*d/ld);ld=d}};
+ cv.onpointerup=cv.onpointercancel=e=>{pts.delete(e.pointerId);ld=0};
+ cv.onwheel=e=>{e.preventDefault();setZ(z*(e.deltaY<0?1.06:.94))};
+ zm.oninput=()=>setZ(+zm.value);
+ ov.querySelector('#cc').onclick=()=>ov.remove();
+ ov.querySelector('#ok').onclick=()=>{const o=document.createElement('canvas');o.width=o.height=240;const c=o.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,240,240);
+  c.drawImage(im,...geom(240));tmpImg=o.toDataURL('image/jpeg',.85);const pv=$('#prev');if(pv)pv.innerHTML=`<img src="${tmpImg}" alt="">`;ov.remove()};
+ paint()}
 function addP(){
  const name=$('#n').value.trim(),price=+$('#pr').value,stock=+$('#st').value;
  if(!name||$('#pr').value===''||!(price>=0))return toast('Poné nombre y precio');
  if(edit){Object.assign(S.prods.find(p=>p.id===edit),{name,price,stock,img:tmpImg});edit=null}
  else S.prods.push({id:Date.now(),name,price,stock:stock||0,img:tmpImg});
- tmpImg=null;save();draw()}
+ tmpImg=null;cropSrc=null;save();draw()}
 function delP(id){if(delId===id){S.prods=S.prods.filter(p=>p.id!==id);delete cart[id];delId=null;save()}else delId=id;draw()}
 function hist(){
  const hoy=new Date().toDateString(),hs=sf==='hoy'?S.sales.filter(s=>new Date(s.date).toDateString()===hoy):S.sales;
