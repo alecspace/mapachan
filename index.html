@@ -55,6 +55,30 @@ input[type=range]{-webkit-appearance:auto;appearance:auto;accent-color:var(--ac)
 .sw button.on{border-color:var(--ac)}.sw u{width:20px;height:28px;border-radius:7px;display:block}
 .cp{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}.cp:last-child{border:0}
 .cp input{width:56px;min-height:40px;padding:2px;border-radius:12px}
+
+.cols,.vg{display:block}
+button:not(:disabled),label.s,select{cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+@media(hover:hover){.s:hover,.q button:not(:disabled):hover{filter:brightness(.95)}.b:not(:disabled):hover{filter:brightness(1.12)}.tb button:hover{color:var(--ac)}}
+@media(min-width:600px){.w{max-width:640px}}
+@media(min-width:900px){
+ body{padding-top:68px;padding-bottom:32px}
+ .w{max-width:1120px;padding:12px 28px}
+ h1{font-size:34px}
+ .tb{top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--bd);padding:8px 28px}
+ .tb div{max-width:1064px;gap:6px}
+ .tb button{flex:none;flex-direction:row;gap:8px;font-size:14px;padding:8px 18px;min-height:44px;border-radius:12px}
+ .tb button i{font-size:18px}
+ .tb button.on{background:var(--chip)}.tb button.on i{background:none;padding:0}
+ .fab{display:none}
+ .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;align-items:start}
+ .cols>.wide{grid-column:1/-1}
+ .vg{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:20px;align-items:start}
+ .vs{position:sticky;top:80px;max-height:calc(100vh - 100px);overflow:auto}
+ #grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px;row-gap:2px}
+ #grid .pw{border-bottom:0;padding:10px 0}
+ #grid .in b{white-space:normal}
+}
 </style></head><body><div class="w">
 <h1 class="sf" id="ttl">Mi <span>Tienda</span></h1>
 <p class="sub">Registrá tus ventas en Gs y R$</p>
@@ -88,7 +112,7 @@ function applyTheme(){const t=S.theme,dk=lum(t.bg)<.3,r=document.documentElement
 const TABS=[['v','🛍️','Vender'],['p','📦','Productos'],['h','🧾','Ventas'],['c','💰','Caja'],['a','🎨','Ajustes']];
 function draw(){
  $('#nav').innerHTML=TABS.map(([k,i,l])=>`<button class="${tab===k?'on':''}" onclick="if(tab!=='${k}')resetForm();tab='${k}';draw();scrollTo(0,0)"><i>${i}</i>${l}</button>`).join('');
- $('#app').innerHTML={v:vender,p:prods,h:hist,c:caja,a:ajustes}[tab]();
+ {const h={v:vender,p:prods,h:hist,c:caja,a:ajustes}[tab]();$('#app').innerHTML=tab==='v'?h:`<div class="cols">${h}</div>`}
  if(tab==='c')updC();
 }
 function vender(){
@@ -97,15 +121,15 @@ function vender(){
  const items=Object.entries(cart).map(([id,q])=>({p:S.prods.find(x=>x.id==id),q})).filter(x=>x.p);
  const C=calc(items),tot=C.total,n=items.reduce((a,x)=>a+x.q,0)+cartP.length,has=items.length+cartP.length;
  const brl=cur==='BRL'&&S.rate>0;
- return `${S.open?'':`<div class="card" style="display:flex;justify-content:space-between;align-items:center"><span class="mu">Caja sin abrir</span><button class="s" onclick="tab=\'c\';draw()">Abrir caja</button></div>`}<input class="search" id="qs" placeholder="🔍 Buscar producto..." value="${esc(qf)}" oninput="filt(this.value)">
+ return `<div class="vg"><div>${S.open?'':`<div class="card" style="display:flex;justify-content:space-between;align-items:center"><span class="mu">Caja sin abrir</span><button class="s" onclick="tab=\'c\';draw()">Abrir caja</button></div>`}<input class="search" id="qs" placeholder="🔍 Buscar producto..." value="${esc(qf)}" oninput="filt(this.value)">
  <div class="card" id="grid" style="padding:2px 14px">${grid(qf)}</div>
 
- <div class="card" id="cart"><h2 style="margin:0 0 4px;font-size:20px">Resumen</h2>
+ </div><div class="vs"><div class="card" id="cart"><h2 style="margin:0 0 4px;font-size:20px">Resumen</h2>
  ${has?items.map(x=>`<div class="r"><span>${x.q} × ${esc(x.p.name)}</span><b>${gs(x.p.price*x.q)}</b></div>`).join('')+packLines():'<p class="mu">Vacío</p>'}
  ${has?dRows(C):''}<div class="t">${gs(tot)}${S.rate>0?`<span class="r2" style="font-size:15px">R$ ${fr(tot/S.rate)}</span>`:''}</div>
  ${SPL.on?splUI(tot):single(brl,tot)}
  <button class="b" id="cbtn" onclick="cobrar()" ${has&&(!SPL.on||splState(tot).ok)?'':'disabled'}>Cobrar</button></div>
- ${n?`<button class="fab" onclick="$('#cart').scrollIntoView({behavior:'smooth'})">🛒 ${n} · ${gs(tot)}</button>`:''}`;
+ </div></div>${n?`<button class="fab" onclick="$('#cart').scrollIntoView({behavior:'smooth'})">🛒 ${n} · ${gs(tot)}</button>`:''}`;
 }
 const reserved=id=>(cart[id]||0)+cartP.reduce((a,x)=>a+(x.comp[id]||0),0);
 const packUse=id=>cartP.reduce((a,x)=>a+(x.comp[id]||0),0);
@@ -251,12 +275,12 @@ function hist(){
  const bp={},pkm={};hs.forEach(s=>s.items.forEach(i=>{if(i.comp){const k=pkm[i.name]||(pkm[i.name]={q:0,t:0});k.q+=i.q;k.t+=i.price*i.q;i.comp.forEach(c=>{const o=bp[c.name]||(bp[c.name]={q:0,pq:0,t:0});o.pq+=c.q})}else{const o=bp[i.name]||(bp[i.name]={q:0,pq:0,t:0});o.q+=i.q;o.t+=i.price*i.q}}));
  const dsc=hs.reduce((a,s)=>a+((s.subtotal??s.total)-s.total),0);
  const rows=Object.entries(bp).sort((a,b)=>b[1].q-a[1].q),uq=rows.reduce((a,r)=>a+r[1].q+r[1].pq,0);
- return `<div style="display:flex;gap:8px;margin-bottom:12px"><button class="s ${sf==='hoy'?'on':''}" onclick="sf='hoy';draw()">Hoy</button><button class="s ${sf==='todo'?'on':''}" onclick="sf='todo';draw()">Todo</button></div>
+ return `<div class="wide" style="display:flex;gap:8px;margin-bottom:12px"><button class="s ${sf==='hoy'?'on':''}" onclick="sf='hoy';draw()">Hoy</button><button class="s ${sf==='todo'?'on':''}" onclick="sf='todo';draw()">Todo</button></div>
  <div class="card"><span class="mu">Vendido ${sf==='hoy'?'hoy':'en total'}</span><div class="t" style="margin:4px 0">${gs(th)}</div>
  <div class="mu">Cobrado en Gs: ${gs(cg)}<br>Cobrado en R$: R$ ${fr(cr)}</div><button class="s" style="margin-top:10px" onclick="csv()">Exportar CSV</button></div>
  <div class="card"><h2 style="margin:0 0 4px;font-size:20px">Por producto</h2>
  ${rows.length||Object.keys(pkm).length?rows.map(([n,o])=>`<div class="r"><div><b>${esc(n)}</b><div class="mu">${o.q+o.pq} vendido${o.q+o.pq==1?'':'s'}${o.pq?` (${o.pq} en pack)`:''}</div></div><b>${o.t>0?gs(o.t):'—'}</b></div>`).join('')+Object.entries(pkm).map(([n,o])=>`<div class="r"><div><b>📦 ${esc(n)}</b><div class="mu">${o.q} pack${o.q==1?'':'s'}</div></div><b>${gs(o.t)}</b></div>`).join('')+(dsc>0?`<div class="r"><span class="mu">Descuentos y promos</span><b style="color:var(--bad)">−${gs(dsc)}</b></div>`:'')+`<div class="r"><b>Total (${uq} unidades)</b><b>${gs(th)}</b></div>`:'<p class="mu">Sin ventas</p>'}</div>
- <div class="card"><h2 style="margin:0 0 4px;font-size:20px">Historial</h2>${hv.length?hv.map(s=>`<div class="r" style="${s.void?'opacity:.55':''}"><div><b style="${s.void?'text-decoration:line-through':''}">${gs(s.total)}</b>${s.void?' <b class="red">ANULADA</b>':''}${s.cur==='BRL'?`<span class="r2">R$ ${fr(s.paid)} a ${gs(s.rate)}</span>`:''}
+ <div class="card wide"><h2 style="margin:0 0 4px;font-size:20px">Historial</h2>${hv.length?hv.map(s=>`<div class="r" style="${s.void?'opacity:.55':''}"><div><b style="${s.void?'text-decoration:line-through':''}">${gs(s.total)}</b>${s.void?' <b class="red">ANULADA</b>':''}${s.cur==='BRL'?`<span class="r2">R$ ${fr(s.paid)} a ${gs(s.rate)}</span>`:''}
  <div class="mu">${payText(s)} · ${new Date(s.date).toLocaleString('es-PY')}<br>${s.items.map(i=>esc(i.name)+(i.comp?' ('+i.comp.map(c=>esc(c.name)+' ×'+c.q).join(', ')+')':'')+' ×'+i.q).join(', ')}${(s.promos||[]).map(p=>`<br>🏷️ ${esc(p.name)} −${gs(p.amount)}`).join('')}${s.disc?`<br>✂️ −${gs(s.disc.amount)} · ${esc(s.disc.reason)}`:''}</div></div>${s.void?'':`<button class="s red" onclick="voidSale('${s.date}')">${vdel===s.date?'¿Seguro?':'Anular'}</button>`}</div>`).join(''):'<p class="mu">Sin ventas todavía</p>'}</div>`;
 }
 const KS=[['ef_g','Efectivo Gs','PYG'],['ef_r','Efectivo R$','BRL'],['pix','Pix','BRL'],['tr','Transferencia','PYG'],['ta','Tarjeta','PYG'],['qr','QR','PYG']];
